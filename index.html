@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>學習中心</title>
+    <style>
+        :root { --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --primary: #6366f1; }
+        [data-theme="dark"] { --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --primary: #818cf8; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; transition: 0.3s; display: flex; flex-direction: column; align-items: center; padding-bottom: 80px; }
+        .container { width: 95%; max-width: 500px; padding: 15px; }
+        .section-header { font-size: 13px; font-weight: 800; color: #94a3b8; margin: 25px 0 10px 5px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; }
+        .section-header::after { content: ""; flex: 1; height: 1px; background: #e2e8f0; margin-left: 10px; opacity: 0.5; }
+        .glass-card { background: var(--card); border-radius: 24px; padding: 20px; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid rgba(226,232,240,0.5); }
+        #video-container { width: 100%; height: 210px; background: #000; border-radius: 16px; overflow: hidden; margin-top: 10px; }
+        .task-card { border-left: 6px solid var(--task-color); }
+        .timer-display { font-family: monospace; font-size: 48px; font-weight: 800; margin: 10px 0; text-align: center; }
+        input, select { background: var(--bg); color: var(--text); border: 1.5px solid #e2e8f0; padding: 12px; border-radius: 12px; outline: none; font-size: 14px; width: 100%; box-sizing: border-box; }
+        .btn-primary { background: var(--primary); color: white; width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; border: none; cursor: pointer; }
+        .btn-gray { background: #94a3b8; color: white; }
+        .color-picker-wrapper { position: relative; display: flex; align-items: center; }
+        #current-color-indicator { width: 40px; height: 40px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; background: conic-gradient(red, orange, yellow, green, cyan, blue, violet, red); }
+        .color-palette { display: none; position: absolute; top: 50px; left: 0; background: var(--card); border: 1px solid #e2e8f0; padding: 10px; border-radius: 15px; grid-template-columns: repeat(4, 1fr); gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); z-index: 100; }
+        .color-palette.active { display: grid; }
+        .color-option { width: 30px; height: 30px; border-radius: 50%; border: none; cursor: pointer; }
+        .notes-area { width: 100%; height: 120px; background: #fef9c3; border-radius: 16px; padding: 15px; border: none; resize: vertical; font-size: 14px; color: #713f12; margin-top: 10px; box-sizing: border-box; display: block; }
+        [data-theme="dark"] .notes-area { background: #422006; color: #fef9c3; }
+        .noise-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
+        .noise-btn { background: var(--bg); border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px; font-size: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin: 20px 0;">
+        <span style="font-weight: 900; font-size: 24px;">🧠 學習中心</span>
+        <button onclick="toggleTheme()" style="background:none; border:none; font-size:24px; cursor:pointer;">🌓</button>
+    </div>
+
+    <div class="section-header">🌲 努力總結</div>
+    <div class="glass-card" style="text-align: center;">
+        <div id="forest" style="font-size:16px; font-weight:bold; color:var(--primary);">累積專注：0分 0秒</div>
+    </div>
+
+    <div class="section-header">🎵 專注音訊</div>
+    <div class="glass-card">
+        <input type="text" id="ytUrl" placeholder="貼上 YouTube 網址..." style="width:100%; margin-bottom:10px;" oninput="handleUrlInput()">
+        <div id="video-container">
+            <iframe id="main-player" width="100%" height="100%" src="https://www.youtube.com/embed/gL8osq048fA" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+        <div style="text-align: center; margin-top: 10px;">
+            <a id="extLink" href="https://www.youtube.com/watch?v=gL8osq048fA" target="_blank" style="font-size: 12px; color: var(--primary); text-decoration: none;">➔ 無法播放？點此在新視窗開啟音樂</a>
+        </div>
+        <div class="noise-grid">
+            <button class="noise-btn" onclick="switchYT('gL8osq048fA')">🌧️</button>
+            <button class="noise-btn" onclick="switchYT('CUWyQDsZm0w')">🍃</button>
+            <button class="noise-btn" onclick="switchYT('Wxs5e7RUW6k')">🌊</button>
+            <button class="noise-btn" onclick="switchYT('jjAQ5bv5UOY')">🔥</button>
+        </div>
+    </div>
+
+    <div class="section-header">➕ 新增任務</div>
+    <div class="glass-card">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
+            <input type="text" id="taskInput" placeholder="任務名稱...">
+            <input type="text" id="decInput" placeholder="專注宣言...">
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+            <div style="display:flex; align-items:center; gap:3px;"><input type="number" id="minInput" value="25" style="width:55px; text-align:center;">分</div>
+            <div style="display:flex; align-items:center; gap:3px;"><input type="number" id="secInput" value="0" style="width:55px; text-align:center;">秒</div>
+            <select id="priorityInput" style="flex:1;">
+                <option value="1">優先程度：低</option>
+                <option value="2" selected>優先程度：中</option>
+                <option value="3">優先程度：高</option>
+            </select>
+            <div class="color-picker-wrapper">
+                <div id="current-color-indicator" onclick="togglePalette()"></div>
+                <div id="color-palette" class="color-palette"></div>
+            </div>
+        </div>
+        <button class="btn-primary btn-gray" onclick="addTask()">建立任務項目</button>
+    </div>
+
+    <div id="taskList"></div>
+    <textarea class="notes-area" id="quickNotes" placeholder="靈感筆記..." oninput="saveNotes()"></textarea>
+    <button class="btn-primary" style="background:#334155; margin-top:25px;" onclick="generateReport()">📊 產出今日總結</button>
+</div>
+
+<audio id="alarmAudio" loop>
+    <source src="https://assets.mixkit.co/active_storage/sfx/951/951-preview.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+    let tasks = [];
+    let activeTimerId = null;
+    let selectedColor = '#6366f1';
+    const alarmAudio = document.getElementById('alarmAudio');
+
+    window.onload = () => {
+        initColorPalette();
+        tasks = JSON.parse(localStorage.getItem('brain_tasks')) || [];
+        document.getElementById('quickNotes').value = localStorage.getItem('brain_notes') || "";
+        if(localStorage.getItem('theme') === 'dark') document.body.setAttribute('data-theme', 'dark');
+        saveAndRender();
+    };
+
+    function initColorPalette() {
+        const palette = document.getElementById('color-palette');
+        const colors = ['#ef4444', '#f97316', '#facc15', '#4ade80', '#22d3ee', '#3b82f6', '#a855f7', '#ec4899'];
+        colors.forEach(c => {
+            const btn = document.createElement('button');
+            btn.className = 'color-option';
+            btn.style.backgroundColor = c;
+            btn.onclick = () => { selectedColor = c; document.getElementById('current-color-indicator').style.background = c; togglePalette(); };
+            palette.appendChild(btn);
+        });
+    }
+
+    function togglePalette() { document.getElementById('color-palette').classList.toggle('active'); }
+
+    function addTask() {
+        alarmAudio.play().then(() => { alarmAudio.pause(); alarmAudio.currentTime = 0; }).catch(()=>{});
+        const name = document.getElementById('taskInput').value;
+        if (!name) return;
+        const totalSec = (parseInt(document.getElementById('minInput').value || 0) * 60) + parseInt(document.getElementById('secInput').value || 0);
+        tasks.push({
+            id: Date.now(), name, dec: document.getElementById('decInput').value,
+            priority: parseInt(document.getElementById('priorityInput').value),
+            color: selectedColor, workSec: totalSec, currentSec: totalSec,
+            totalTimeSpent: 0, mode: 'work', isRunning: false, isTimeUp: false
+        });
+        document.getElementById('taskInput').value = "";
+        saveAndRender();
+    }
+
+    function toggleTimer(id) {
+        const t = tasks.find(x => x.id === id);
+        alarmAudio.play().then(() => { alarmAudio.pause(); alarmAudio.currentTime = 0; }).catch(()=>{});
+
+        if (t.isTimeUp) {
+            alarmAudio.pause(); alarmAudio.currentTime = 0;
+            t.isTimeUp = false;
+            t.mode = (t.mode === 'work') ? 'break' : 'work';
+            t.currentSec = (t.mode === 'break') ? 300 : t.workSec;
+            saveAndRender();
+            return;
+        }
+
+        if (t.isRunning) {
+            clearInterval(activeTimerId); t.isRunning = false; activeTimerId = null;
+        } else {
+            if (activeTimerId) { clearInterval(activeTimerId); tasks.forEach(i => i.isRunning = false); }
+            t.isRunning = true;
+            activeTimerId = setInterval(() => {
+                if (t.currentSec > 0) { 
+                    t.currentSec--; 
+                    if(t.mode === 'work') t.totalTimeSpent++;
+                    renderTasks(); updateForestDisplay();
+                } else { 
+                    clearInterval(activeTimerId); t.isRunning = false; t.isTimeUp = true;
+                    alarmAudio.play();
+                    saveAndRender();
+                }
+            }, 1000);
+        }
+        saveAndRender();
+    }
+
+    function saveAndRender() {
+        localStorage.setItem('brain_tasks', JSON.stringify(tasks));
+        renderTasks();
+        updateForestDisplay();
+    }
+
+    function renderTasks() {
+        const list = document.getElementById('taskList');
+        list.innerHTML = '';
+        const sorted = [...tasks].sort((a, b) => b.priority - a.priority);
+        sorted.forEach(t => {
+            const card = document.createElement('div');
+            card.className = `glass-card task-card`;
+            card.style.setProperty('--task-color', t.color);
+            let btnText = t.isRunning ? '暫停' : (t.mode === 'break' ? '開始休息' : '進入專注');
+            if (t.isTimeUp) btnText = '停止鬧鐘';
+            
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-weight:bold;">${t.name}</span>
+                    <button style="background:none; border:none; color:#cbd5e1; cursor:pointer;" onclick="deleteTask(${t.id})">✕</button>
+                </div>
+                <div class="timer-display" style="color:${t.color}">${Math.floor(t.currentSec/60)}:${(t.currentSec%60).toString().padStart(2,'0')}</div>
+                <button class="btn-primary" onclick="toggleTimer(${t.id})" style="background:${t.isRunning?'#94a3b8':(t.isTimeUp?'#ef4444':t.color)}">${btnText}</button>
+            `;
+            list.appendChild(card);
+        });
+    }
+
+    function updateForestDisplay() {
+        const total = tasks.reduce((s, t) => s + t.totalTimeSpent, 0);
+        document.getElementById('forest').innerText = `累積專注：${Math.floor(total/60)}分 ${total%60}秒`;
+    }
+
+    function deleteTask(id) { if(confirm('確定刪除？')) { tasks = tasks.filter(x => x.id !== id); saveAndRender(); } }
+    function switchYT(vid) { 
+        document.getElementById('main-player').src = `https://www.youtube.com/embed/${vid}`; 
+        document.getElementById('extLink').href = `https://www.youtube.com/watch?v=${vid}`;
+    }
+    function handleUrlInput() { 
+        const url = document.getElementById('ytUrl').value.trim();
+        let vid = "";
+        if (url.includes('v=')) vid = url.split('v=')[1].split('&')[0];
+        else if (url.includes('be/')) vid = url.split('be/')[1];
+        if (vid) switchYT(vid);
+    }
+    function toggleTheme() { const n = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'; document.body.setAttribute('data-theme', n); localStorage.setItem('theme', n); }
+    function saveNotes() { localStorage.setItem('brain_notes', document.getElementById('quickNotes').value); }
+    function generateReport() {
+        const total = tasks.reduce((s, t) => s + t.totalTimeSpent, 0);
+        alert(`總專注時長：${Math.floor(total/60)}分 ${total%60}秒\n\n${tasks.map(t => `${t.name}: ${Math.floor(t.totalTimeSpent/60)}分`).join('\n')}`);
+    }
+</script>
+</body>
+</html>
