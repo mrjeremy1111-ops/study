@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>學習專區 | 深度專注模式</title>
+    <title>學習專區 | 頂級專注模式</title>
     <style>
         :root { --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --primary: #6366f1; --accent: #10b981; --danger: #ef4444; }
         [data-theme="dark"] { --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --primary: #818cf8; }
         body.mode-break { background: #ecfdf5; }
         [data-theme="dark"].mode-break { background: #064e3b; }
-        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; align-items: center; padding-bottom: 140px; transition: background 0.5s; -webkit-tap-highlight-color: transparent; min-height: 100vh; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; align-items: center; padding-bottom: 40px; transition: background 0.5s; -webkit-tap-highlight-color: transparent; min-height: 100vh; }
         .container { width: 92%; max-width: 600px; padding: 10px; }
         #quote-area { font-size: 14px; color: #64748b; text-align: center; margin: 15px 0; font-weight: 500; }
-        .section-header { font-size: 12px; font-weight: 800; color: #94a3b8; margin: 25px 0 10px 5px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; }
+        .section-header { font-size: 12px; font-weight: 800; color: #94a3b8; margin: 20px 0 10px 5px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; }
         .section-header::after { content: ""; flex: 1; height: 1px; background: #e2e8f0; margin-left: 10px; opacity: 0.5; }
         .glass-card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 25px rgba(0,0,0,0.05); border: 1px solid rgba(226,232,240,0.6); position: relative; }
         .timer-display { font-family: 'Courier New', monospace; font-size: 64px; font-weight: 800; margin: 10px 0; text-align: center; color: var(--primary); }
@@ -30,19 +30,24 @@
         .color-option { width: 32px; height: 32px; border-radius: 50%; border: none; cursor: pointer; }
         .ai-portal { background: #000; color: white !important; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; padding: 15px; border-radius: 15px; margin: 10px 0; font-weight: bold; }
 
-        /* 🎵 音樂播放器樣式 */
-        .music-player { position: fixed; bottom: 0; left: 0; width: 100%; background: #1e293b; padding: 0; z-index: 9999; box-shadow: 0 -5px 20px rgba(0,0,0,0.3); border-top-left-radius: 20px; border-top-right-radius: 20px; transition: 0.3s; }
-        .music-toggle { position: absolute; top: -35px; right: 20px; background: var(--primary); color: white; padding: 8px 15px; border-radius: 12px 12px 0 0; font-size: 12px; font-weight: bold; cursor: pointer; }
+        /* 🎵 置頂音樂播放器樣式 */
+        .top-music-player { background: #1e293b; border-radius: 20px; overflow: hidden; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .music-label { color: #94a3b8; font-size: 11px; font-weight: bold; text-align: center; padding: 5px 0; background: #0f172a; }
     </style>
 </head>
-<body>
+<body data-theme="dark">
 
 <div class="container">
     <div style="display:flex; justify-content:space-between; align-items:center; margin: 20px 0 5px 0;">
         <span style="font-weight: 900; font-size: 24px;">🧠 學習專區</span>
         <button onclick="toggleTheme()" style="background:none; border:none; font-size:24px;">🌓</button>
     </div>
-    <div id="quote-area">“ 你的潛力，遠比你想像中更強大。 ”</div>
+    
+    <div class="section-header">專注背景音樂</div>
+    <div class="top-music-player">
+        <div class="music-label">Lofi Study Radio</div>
+        <iframe width="100%" height="80" src="https://www.youtube.com/embed/wgwcBTrY9og?list=RDwgwcBTrY9og&start_radio=1" frameborder="0" allow="autoplay; encrypted-media;"></iframe>
+    </div>
 
     <div class="glass-card" style="text-align: center; padding: 15px;">
         <div id="forest" style="font-weight:bold; color:var(--primary); font-size: 18px;">累積專注：0分 0秒</div>
@@ -74,13 +79,6 @@
     <button class="btn-primary" style="background:#334155; margin-top:20px;" onclick="generateReport()">📊 產出今日學習總結</button>
 </div>
 
-<div class="music-player" id="player-box" style="bottom: 0px;">
-    <div class="music-toggle" onclick="togglePlayer()">🎵 音樂面板</div>
-    <div style="text-align:center; overflow: hidden; border-top-left-radius: 20px; border-top-right-radius: 20px;">
-        <iframe width="100%" height="80" src="https://www.youtube.com/embed/wgwcBTrY9og?list=RDwgwcBTrY9og&start_radio=1" frameborder="0" allow="autoplay; encrypted-media;"></iframe>
-    </div>
-</div>
-
 <audio id="alarmAudio" loop><source src="https://assets.mixkit.co/active_storage/sfx/951/951-preview.mp3" type="audio/mpeg"></audio>
 
 <script>
@@ -93,7 +91,6 @@
         initColorPalette();
         try {
             tasks = JSON.parse(localStorage.getItem('study_tasks')) || [];
-            // 防 NaN 檢查
             tasks = tasks.filter(t => !isNaN(t.currentSec) && !isNaN(t.totalTimeSpent));
         } catch(e) { tasks = []; }
         
@@ -104,11 +101,6 @@
         const runningTask = tasks.find(t => t.isRunning);
         if (runningTask) { runningTask.isRunning = false; toggleTimer(runningTask.id); }
     };
-
-    function togglePlayer() {
-        const p = document.getElementById('player-box');
-        p.style.bottom = (p.style.bottom === '-80px') ? '0px' : '-80px';
-    }
 
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') { syncTime(); } 
@@ -145,9 +137,7 @@
 
     function addTask() {
         const name = document.getElementById('taskInput').value; if(!name) return;
-        const m = parseInt(document.getElementById('minInput').value||0);
-        const s = parseInt(document.getElementById('secInput').value||0);
-        const totalSec = (m*60)+s;
+        const totalSec = (parseInt(document.getElementById('minInput').value||0)*60)+parseInt(document.getElementById('secInput').value||0);
         tasks.push({ id:Date.now(), name, color:selectedColor, currentSec:totalSec, workSec:totalSec, totalTimeSpent:0, isRunning:false, mode:'work' });
         document.getElementById('taskInput').value=""; save();
     }
@@ -183,17 +173,14 @@
             const absSec = Math.abs(t.currentSec);
             const card = document.createElement('div'); card.className = 'glass-card task-item'; card.style.setProperty('--t-color', t.color);
             card.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-weight:bold;">${t.mode==='break'?'☕ 休息中':t.name}</span><button onclick="deleteTask(${t.id})" style="background:none; border:none; color:#cbd5e1; font-size:20px;">✕</button></div>
-                <div class="timer-display ${t.currentSec<0&&t.mode==='work'?'timer-over':''}" style="color:${t.mode==='break'?'#10b981':t.color}">${t.currentSec<0?'-':''}${Math.floor(absSec/60)}:${(absRem=absSec%60, absRem.toString().padStart(2,'0'))}</div>
+                <div class="timer-display ${t.currentSec<0&&t.mode==='work'?'timer-over':''}" style="color:${t.mode==='break'?'#10b981':t.color}">${t.currentSec<0?'-':''}${Math.floor(absSec/60)}:${(absSec%60).toString().padStart(2,'0')}</div>
                 <div class="button-group"><button class="btn-primary" onclick="toggleTimer(${t.id})" style="background:${t.isRunning?'#cbd5e1':(t.mode==='break'?'#10b981':t.color)}">${t.isRunning?'暫停':(t.mode==='break'?'開始休息':'開始專注')}</button>
                 <button class="btn-primary" style="background:var(--accent);" onclick="finishTask(${t.id})">完成/切換</button></div>`;
             list.appendChild(card);
         });
     }
 
-    function updateForest() { 
-        const total = tasks.reduce((s, t) => s + (t.totalTimeSpent || 0), 0); 
-        document.getElementById('forest').innerText = `累積專注：${Math.floor(total/60)}分 ${total%60}秒`; 
-    }
+    function updateForest() { const total = tasks.reduce((s, t) => s + (t.totalTimeSpent || 0), 0); document.getElementById('forest').innerText = `累積專注：${Math.floor(total/60)}分 ${total%60}秒`; }
     function deleteTask(id) { if(confirm('要刪除嗎？')) { tasks = tasks.filter(x => x.id !== id); save(); } }
     function toggleTheme() { const n = document.body.getAttribute('data-theme')==='dark'?'light':'dark'; document.body.setAttribute('data-theme', n); localStorage.setItem('theme', n); }
     function saveNotes() { localStorage.setItem('study_notes', document.getElementById('quickNotes').value); }
