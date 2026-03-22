@@ -3,196 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>學習專區</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>學習專區 | 深度專注模式</title>
     <style>
         :root { --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --primary: #6366f1; --accent: #10b981; --danger: #ef4444; }
         [data-theme="dark"] { --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --primary: #818cf8; }
-        body.mode-break { background: #ecfdf5; }
-        [data-theme="dark"].mode-break { background: #064e3b; }
-        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; align-items: center; padding-bottom: 60px; transition: background 0.5s; -webkit-tap-highlight-color: transparent; }
-        .container { width: 92%; max-width: 600px; padding: 10px; }
-        #quote-area { font-size: 15px; color: #64748b; font-style: italic; text-align: center; margin: 10px 0 25px 0; font-weight: 500; }
-        .section-header { font-size: 12px; font-weight: 800; color: #94a3b8; margin: 25px 0 10px 5px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; }
-        .section-header::after { content: ""; flex: 1; height: 1px; background: #e2e8f0; margin-left: 10px; opacity: 0.5; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; transition: background 0.5s; -webkit-tap-highlight-color: transparent; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+        .container { width: 92%; max-width: 600px; padding: 20px 10px; }
         .glass-card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 25px rgba(0,0,0,0.05); border: 1px solid rgba(226,232,240,0.6); position: relative; }
-        
         .timer-display { font-family: 'Courier New', monospace; font-size: 64px; font-weight: 800; margin: 10px 0; text-align: center; color: var(--primary); }
         .timer-over { color: var(--danger) !important; animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0.5; } }
+        input { background: var(--bg); color: var(--text); border: 1.5px solid #e2e8f0; padding: 12px; border-radius: 12px; font-size: 16px; width: 100%; box-sizing: border-box; outline: none; margin-bottom: 10px; }
+        .btn-primary { background: var(--primary); color: white; width: 100%; padding: 15px; border-radius: 15px; font-weight: 700; border: none; cursor: pointer; font-size: 16px; margin-top: 5px; }
+        .ai-portal { background: #000; color: white; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; padding: 18px; border-radius: 15px; font-weight: bold; margin: 20px 0; border: 1px solid #334155; }
         
-        input { background: var(--bg); color: var(--text); border: 1.5px solid #e2e8f0; padding: 12px; border-radius: 12px; font-size: 16px; width: 100%; box-sizing: border-box; outline: none; }
-        .btn-primary { background: var(--primary); color: white; width: 100%; padding: 15px; border-radius: 15px; font-weight: 700; border: none; cursor: pointer; font-size: 16px; transition: 0.2s; }
-        
-        /* 嚴格保持左右按鈕一樣大 */
-        .button-group { display: flex; gap: 10px; margin-top: 5px; }
-        .button-group button { flex: 1; margin-top: 0; }
-
-        .task-item { border-left: 8px solid var(--t-color); }
-        .color-palette { display: none; position: absolute; bottom: 55px; left: 0; background: var(--card); border: 1px solid #e2e8f0; padding: 10px; border-radius: 15px; grid-template-columns: repeat(4, 1fr); gap: 10px; z-index: 100; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
-        .color-palette.active { display: grid; }
-        .color-option { width: 32px; height: 32px; border-radius: 50%; border: none; cursor: pointer; }
-
-        /* AI 傳送門 */
-        .ai-portal { background: linear-gradient(135deg, #4285f4, #9b51e0); color: white !important; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 16px; padding: 18px; border-radius: 15px; margin-bottom: 15px; font-weight: 800; box-shadow: 0 4px 15px rgba(66, 133, 244, 0.2); }
+        /* 懸浮返回按鈕：解決 Scriptable 回不來的痛點 */
+        #floating-back {
+            position: fixed; top: 30px; left: 20px; z-index: 10000;
+            background: rgba(15, 23, 42, 0.9); color: white;
+            padding: 12px 20px; border-radius: 50px; font-weight: bold;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(8px); display: none; cursor: pointer;
+        }
     </style>
 </head>
-<body>
+<body data-theme="dark">
+
+<div id="floating-back" onclick="goHome()">← 返回計時器</div>
 
 <div class="container">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin: 20px 0 5px 0;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
         <span style="font-weight: 900; font-size: 26px;">🧠 學習專區</span>
-        <button onclick="toggleTheme()" style="background:none; border:none; font-size:26px;">🌓</button>
-    </div>
-    <div id="quote-area"></div>
-
-    <div class="glass-card" style="text-align: center; padding: 15px;">
-        <div id="forest" style="font-weight:bold; color:var(--primary); font-size: 18px;">累積專注：0分 0秒</div>
+        <button onclick="toggleTheme()" style="background:none; border:none; font-size:24px;">🌓</button>
     </div>
 
-    <div class="section-header">新增專注任務</div>
+    <div class="glass-card" style="text-align: center;">
+        <div id="total-stat" style="font-weight:bold; color:var(--primary); font-size: 18px;">今日累積專注：0 分 0 秒</div>
+    </div>
+
     <div class="glass-card">
-        <input type="text" id="taskInput" placeholder="要做什麼項目？" style="margin-bottom:12px;">
-        <div style="display:flex; gap:10px; margin-bottom:12px; align-items:center;">
-            <input type="number" id="minInput" value="25" style="width:70px;">分
-            <input type="number" id="secInput" value="0" style="width:70px;">秒
-            <div style="position: relative;">
-                <div id="current-color-indicator" onclick="togglePalette()" style="width:40px; height:40px; border-radius:50%; border:3px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,0.15); cursor:pointer; background:#6366f1;"></div>
-                <div id="color-palette" class="color-palette"></div>
-            </div>
+        <input type="text" id="taskName" placeholder="現在要專注做什麼？">
+        <div style="display:flex; gap:10px; align-items:center; margin-bottom: 10px;">
+            <input type="number" id="minInput" value="25" style="width:80px;"> 分
+            <input type="number" id="secInput" value="0" style="width:80px;"> 秒
         </div>
-        <button class="btn-primary" style="background:#94a3b8" onclick="addTask()">建立任務</button>
+        <button class="btn-primary" onclick="addTask()">建立專注任務</button>
     </div>
 
     <div id="taskList"></div>
 
-    <div class="section-header">學習輔助</div>
+    <div style="margin-top: 30px; opacity: 0.6; font-size: 12px; font-weight: bold; letter-spacing: 1px;">學習輔助工具</div>
     <a href="https://gemini.google.com/" class="ai-portal" onclick="savePreLeaveState()">
-        ✨ 開啟 Gemini 智慧查詢
+        ✨ 啟動 AI 智慧查詢 (Gemini)
     </a>
 
-    <textarea id="quickNotes" placeholder="隨手筆記..." oninput="saveNotes()" style="width:100%; height:120px; border-radius:15px; padding:15px; border:none; background:#fef9c3; resize:none; font-size:16px; color:#713f12; box-sizing:border-box;"></textarea>
-    <button class="btn-primary" style="background:#334155; margin-top:20px;" onclick="generateReport()">📊 產出今日總結</button>
+    <textarea id="notes" placeholder="隨手筆記..." oninput="saveData()" style="width:100%; height:150px; border-radius:20px; padding:15px; border:none; background:#1e293b; color:#fff; font-size:16px; box-sizing:border-box;"></textarea>
 </div>
 
-<audio id="alarmAudio" loop><source src="https://assets.mixkit.co/active_storage/sfx/951/951-preview.mp3" type="audio/mpeg"></audio>
+<audio id="alarm"><source src="https://assets.mixkit.co/active_storage/sfx/951/951-preview.mp3" type="audio/mpeg"></audio>
 
 <script>
     let tasks = [];
-    let activeTimerId = null;
-    let selectedColor = '#6366f1';
-    const alarmAudio = document.getElementById('alarmAudio');
-    const quotes = ["今天的努力，是為了遇見更好的自己。", "專注是通往卓越的唯一途徑。", "你的潛力，遠比你想像中更強大。"];
+    let timerInterval = null;
+    const GITHUB_URL = window.location.origin + window.location.pathname;
 
     window.onload = () => {
-        document.getElementById('quote-area').innerText = `“ ${quotes[Math.floor(Math.random() * quotes.length)]} ”`;
-        initColorPalette();
         tasks = JSON.parse(localStorage.getItem('study_tasks')) || [];
-        document.getElementById('quickNotes').value = localStorage.getItem('study_notes') || "";
-        if(localStorage.getItem('theme') === 'dark') document.body.setAttribute('data-theme', 'dark');
+        document.getElementById('notes').value = localStorage.getItem('study_notes') || "";
+        if(localStorage.getItem('theme') === 'light') document.body.removeAttribute('data-theme');
         
-        syncTime(); // 啟動時自動校正
-        renderTasks(); updateForest();
-        
-        // 恢復計時器
-        const runningTask = tasks.find(t => t.isRunning);
-        if (runningTask) { runningTask.isRunning = false; toggleTimer(runningTask.id); }
+        syncTime(); // 返回時自動校正
+        render();
+        startGlobalTick();
     };
 
-    // 當網頁從背景回到前景（按返回鍵）時觸發自動校正
-    document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-            syncTime();
+    // 核心邏輯：監測是否在 Gemini 頁面
+    setInterval(() => {
+        const backBtn = document.getElementById('floating-back');
+        if (!window.location.href.includes(GITHUB_URL) && !window.location.href.includes('index.html')) {
+            backBtn.style.display = 'block';
         } else {
-            if (tasks.some(t => t.isRunning)) {
-                localStorage.setItem('leave_timestamp', Date.now().toString());
-            }
+            backBtn.style.display = 'none';
         }
-    });
+    }, 1000);
 
-    function syncTime() {
-        const leaveTime = localStorage.getItem('leave_timestamp');
-        if (leaveTime && tasks.some(t => t.isRunning)) {
-            const passedSec = Math.floor((Date.now() - parseInt(leaveTime)) / 1000);
-            tasks.forEach(t => {
-                if (t.isRunning) {
-                    t.currentSec -= passedSec;
-                    if (t.mode === 'work') t.totalTimeSpent += passedSec;
-                }
-            });
-            localStorage.removeItem('leave_timestamp');
-            renderTasks();
-            updateForest();
-        }
+    function goHome() {
+        savePreLeaveState();
+        window.location.href = GITHUB_URL;
     }
 
     function savePreLeaveState() {
-        localStorage.setItem('leave_timestamp', Date.now().toString());
+        if (tasks.some(t => t.running)) {
+            localStorage.setItem('leave_time', Date.now().toString());
+        }
         localStorage.setItem('study_tasks', JSON.stringify(tasks));
     }
 
-    function initColorPalette() {
-        const p = document.getElementById('color-palette');
-        ['#ef4444','#f97316','#facc15','#4ade80','#22d3ee','#3b82f6','#a855f7','#ec4899'].forEach(c => {
-            const b = document.createElement('button'); b.className='color-option'; b.style.backgroundColor=c;
-            b.onclick=()=>{ selectedColor=c; document.getElementById('current-color-indicator').style.background=c; togglePalette(); };
-            p.appendChild(b);
-        });
+    function syncTime() {
+        const leaveTime = localStorage.getItem('leave_time');
+        if (leaveTime && tasks.some(t => t.running)) {
+            const diff = Math.floor((Date.now() - parseInt(leaveTime)) / 1000);
+            tasks.forEach(t => {
+                if (t.running) {
+                    t.remain -= diff;
+                    t.spent += diff;
+                }
+            });
+            localStorage.removeItem('leave_time');
+        }
     }
 
-    function togglePalette() { document.getElementById('color-palette').classList.toggle('active'); }
+    function startGlobalTick() {
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            let changed = false;
+            tasks.forEach(t => {
+                if (t.running) {
+                    t.remain--;
+                    t.spent++;
+                    changed = true;
+                    if (t.remain === 0) document.getElementById('alarm').play();
+                }
+            });
+            if (changed) {
+                render();
+                localStorage.setItem('study_tasks', JSON.stringify(tasks));
+            }
+        }, 1000);
+    }
 
     function addTask() {
-        const name = document.getElementById('taskInput').value; if(!name) return;
-        const totalSec = (parseInt(document.getElementById('minInput').value||0)*60)+parseInt(document.getElementById('secInput').value||0);
-        tasks.push({ id:Date.now(), name, color:selectedColor, currentSec:totalSec, workSec:totalSec, totalTimeSpent:0, isRunning:false, mode:'work' });
-        document.getElementById('taskInput').value=""; save();
+        const name = document.getElementById('taskName').value || "未命名任務";
+        const sec = (parseInt(document.getElementById('minInput').value || 0) * 60) + parseInt(document.getElementById('secInput').value || 0);
+        tasks.push({ id: Date.now(), name, remain: sec, spent: 0, running: false });
+        render(); saveData();
     }
 
-    function toggleTimer(id) {
-        const t = tasks.find(x => x.id === id);
-        if (t.isRunning) { clearInterval(activeTimerId); t.isRunning = false; activeTimerId = null; } 
-        else {
-            if (activeTimerId) { clearInterval(activeTimerId); tasks.forEach(i => i.isRunning = false); }
-            t.isRunning = true;
-            activeTimerId = setInterval(() => {
-                t.currentSec--; if(t.mode === 'work') t.totalTimeSpent++;
-                if(t.currentSec === 0 && t.mode === 'work') alarmAudio.play();
-                renderTasks(); updateForest();
-                localStorage.setItem('study_tasks', JSON.stringify(tasks));
-            }, 1000);
-        }
-        save();
-    }
-
-    function finishTask(id) {
-        const t = tasks.find(x => x.id === id); clearInterval(activeTimerId); activeTimerId = null; t.isRunning = false; alarmAudio.pause();
-        if(t.mode === 'work') { t.mode = 'break'; t.currentSec = 300; document.body.classList.add('mode-break'); } 
-        else { t.mode = 'work'; t.currentSec = t.workSec; document.body.classList.remove('mode-break'); }
-        save();
-    }
-
-    function save() { localStorage.setItem('study_tasks', JSON.stringify(tasks)); renderTasks(); updateForest(); }
-
-    function renderTasks() {
-        const list = document.getElementById('taskList'); list.innerHTML = '';
+    function toggle(id) {
         tasks.forEach(t => {
-            const absSec = Math.abs(t.currentSec);
-            const card = document.createElement('div'); card.className = 'glass-card task-item'; card.style.setProperty('--t-color', t.color);
-            card.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-weight:bold;">${t.mode==='break'?'☕ 休息中':t.name}</span><button onclick="deleteTask(${t.id})" style="background:none; border:none; color:#cbd5e1; font-size:20px;">✕</button></div>
-                <div class="timer-display ${t.currentSec<0&&t.mode==='work'?'timer-over':''}" style="color:${t.mode==='break'?'#10b981':t.color}">${t.currentSec<0?'-':''}${Math.floor(absSec/60)}:${(absSec%60).toString().padStart(2,'0')}</div>
-                <div class="button-group"><button class="btn-primary" onclick="toggleTimer(${t.id})" style="background:${t.isRunning?'#cbd5e1':(t.mode==='break'?'#10b981':t.color)}">${t.isRunning?'暫停':(t.mode==='break'?'開始休息':'開始專注')}</button>
-                <button class="btn-primary" style="background:var(--accent);" onclick="finishTask(${t.id})">完成/切換</button></div>`;
+            if (t.id === id) t.running = !t.running;
+            else t.running = false; // 一次只能跑一個
+        });
+        render(); saveData();
+    }
+
+    function render() {
+        const list = document.getElementById('taskList');
+        list.innerHTML = '';
+        let totalSpent = 0;
+        tasks.forEach(t => {
+            totalSpent += t.spent;
+            const isOver = t.remain < 0;
+            const absRem = Math.abs(t.remain);
+            const card = document.createElement('div');
+            card.className = 'glass-card';
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>${t.name}</span><span onclick="del(${t.id})" style="color:#94a3b8">✕</span></div>
+                <div class="timer-display ${isOver?'timer-over':''}">${isOver?'-':''}${Math.floor(absRem/60)}:${(absRem%60).toString().padStart(2,'0')}</div>
+                <button class="btn-primary" style="background:${t.running?'#94a3b8':''}" onclick="toggle(${t.id})">${t.running?'暫停中':'開始專注'}</button>
+            `;
             list.appendChild(card);
         });
+        document.getElementById('total-stat').innerText = `今日累積專注：${Math.floor(totalSpent/60)} 分 ${totalSpent%60} 秒`;
     }
 
-    function updateForest() { const total = tasks.reduce((s, t) => s + t.totalTimeSpent, 0); document.getElementById('forest').innerText = `累積專注：${Math.floor(total/60)}分 ${total%60}秒`; }
-    function deleteTask(id) { if(confirm('要刪除嗎？')) { tasks = tasks.filter(x => x.id !== id); save(); } }
-    function toggleTheme() { const n = document.body.getAttribute('data-theme')==='dark'?'light':'dark'; document.body.setAttribute('data-theme', n); localStorage.setItem('theme', n); }
-    function saveNotes() { localStorage.setItem('study_notes', document.getElementById('quickNotes').value); }
-    function generateReport() {
-        const total = tasks.reduce((s, t) => s + t.totalTimeSpent, 0);
-        alert(`📊 今日學習總結：\n總專注時數：${Math.floor(total/60)}分 ${total%60}秒\n\n細項列表：\n${tasks.map(t => `- ${t.name}: ${Math.floor(t.totalTimeSpent/60)}分 ${t.totalTimeSpent%60}秒`).join('\n')}`);
+    function del(id) { tasks = tasks.filter(t => t.id !== id); render(); saveData(); }
+    function saveData() { 
+        localStorage.setItem('study_tasks', JSON.stringify(tasks)); 
+        localStorage.setItem('study_notes', document.getElementById('notes').value);
+    }
+    function toggleTheme() {
+        document.body.getAttribute('data-theme') ? document.body.removeAttribute('data-theme') : document.body.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', document.body.getAttribute('data-theme') || 'light');
     }
 </script>
 </body>
